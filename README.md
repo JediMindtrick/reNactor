@@ -7,3 +7,9 @@ Based off of [nactor](https://github.com/benlau/nactor), this is a runtime for r
 1.  Location transparency of remote actors
 2.  Basic Supervision
 3.  Hot-swapping of actor implementations
+
+###Test Harness
+```
+$ npm install -g nodemon
+$ npm testRunner
+```

@@ -1,6 +1,10 @@
 var path = require('path'),
-    test = require('./testHelpers.js').test;
+    helpers = require('./testHelpers.js');
+    test = helpers.test;
+    beginTest = helpers.beginTest;
     actorFolder = path.join(__dirname, '..','actors');
+
+beginTest('loadByVersion.js');
 
 var renactor = require('../index.js').system;
 var sys = renactor('test',actorFolder);
@@ -14,7 +18,6 @@ sys.getActor('examples.hello').then(function(actor){
     actor.ask('version',function(reply){
         test(reply == 1,'version == 0');
     });
-
 });
 
 sys.getActor('examples.hello',0).then(function(actor){

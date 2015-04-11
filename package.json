@@ -12,7 +12,8 @@
     "colors": "^1.0.3"
   },
   "scripts": {
-    "test": "node test/loadByVersion.js",
+    "test": "node test/allTests.js",
+    "testRunner": "nodemon -e html,js --exec 'npm' test",
     "dev": "node sandbox.js",
     "start": "node index.js"
   },

@@ -10,3 +10,7 @@ exports.test = function(bool,message){
         return 0;
     }
 };
+
+exports.beginTest = function(message){
+    console.log(('BEGIN TEST: ' + message).yellow.inverse);
+};
