@@ -8,6 +8,9 @@ exports.get = function(){
             // Actor method - "hello"
             console.log('hello: ' + message[0] + ', from: ' + message[1]);
             return "Done";
+        },
+        version: function(){
+            return 0;
         }
     };
 }
