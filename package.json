@@ -1,0 +1,29 @@
+{
+  "name": "reNactor",
+  "version": "0.1.0",
+  "description": "A runtime for nactor actors",
+  "main": "index.js",
+  "dependencies": {
+    "nactor": "^0.2.0",
+    "promisify-node": "^0.1.5",
+    "q": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node sandbox.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JediMindtrick/reNactor.git"
+  },
+  "keywords": [
+    "actor"
+  ],
+  "author": "Brandon Wilhite",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JediMindtrick/reNactor/issues"
+  },
+  "homepage": "https://github.com/JediMindtrick/reNactor"
+}
