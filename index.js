@@ -1,7 +1,8 @@
 var path = require('path'),
     nactor = require('nactor'),
     Promise = require("bluebird"),
-    fs = Promise.promisifyAll(require("fs"));
+    fs = Promise.promisifyAll(require("fs")),
+    cache = require('./actorCache.js');
 
 var _system = function(name,actorPath){
     var _name = name;
@@ -36,60 +37,22 @@ var _system = function(name,actorPath){
         return fs.readdirAsync(requirePath)
         .then(function(files){
 
-            var max = specificVersion !== void(0) ? specificVersion : _getMaxFileVersion(files);
+            var version = specificVersion !== void(0) ? specificVersion : _getMaxFileVersion(files);
 
-            requirePath = path.join(requirePath, max + '.js');
+            requirePath = path.join(requirePath, version + '.js');
 
             var _actor = require(requirePath);
 
             var actor = nactor.actor(_actor.get());
             actor.init(opts);
 
-            _cacheActor(type,actor,opts);
+            cache.cacheActor(type,actor,opts,version);
 
             return actor;
         });
     }
 
-    var actors = {};
-
-    var _cacheActor = function(type,actor,opts){
-
-        if(actors[type] == undefined){
-            actors[type] = [];
-        }
-        actors[type].push([actor,opts]);
-    };
-    var _replaceAll = function(type){
-        return new Promise(function(resolve,reject){
-
-            var currentList = actors[type] || [];
-            actors[type] = [];
-
-            var allP = 0;
-
-            if(currentList.length < 1) resolve([]);
-
-            currentList.forEach(function(tuple){
-
-                tuple[0].die(function(mailbox){
-
-                    var _gotActor = _getActor(type,tuple[1]);
-                    _gotActor.then(function(actor){
-                        allP++;
-
-                        tuple[0].setInternalActor(actor.getInternalActor());
-                        if(allP == currentList.length){
-                            actors[type] = currentList;
-                            resolve(currentList);
-                        }
-                    });
-
-                });
-            });
-
-        });
-    };
+    cache.initCache(_getActor);
 
     return {
         getPath: function(){
@@ -99,7 +62,7 @@ var _system = function(name,actorPath){
             return _name;
         },
         getActor: _getActor,
-        hotSwap: function(type,src){
+        hotSwap: function(type,src,swapVersions){
 
             var requirePath = _getTypeDirectory(type);
 
@@ -110,18 +73,10 @@ var _system = function(name,actorPath){
 
                 newPath = path.join(requirePath, (max + 1) + '.js');
 
-                //return fs.writeFileAsync(newPath,src);
-                var writeP = fs.writeFileAsync(newPath,src);
-
-                if(actors[type] != undefined){
-
-                    return writeP.then(function(){
-                        return _replaceAll(type);
-                    });
-                }else{
-                    return writeP;
-                }
-
+                return fs.writeFileAsync(newPath,src);
+            })
+            .then(function(){
+                return cache.swapCache(type,swapVersions);
             });
 
         }
