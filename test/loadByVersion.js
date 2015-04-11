@@ -20,7 +20,7 @@ sys.getActor('examples.hello').then(function(actor){
     });
 });
 
-sys.getActor('examples.hello',0).then(function(actor){
+sys.getActor('examples.hello',{},0).then(function(actor){
     actor.init();
     // Ask to execute the hello() method. It will be called in next tick
     actor.ask("hello",["Node.js!",'test script'],function(reply){

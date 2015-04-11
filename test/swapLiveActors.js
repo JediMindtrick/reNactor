@@ -10,16 +10,16 @@ var path = require('path'),
 var renactor = require('../index.js').system;
 
 var deleteDirectories = function(){
-    return rmDir(path.join(__dirname,'sandbox','actors','createNewVersion'));
+    return rmDir(path.join(__dirname,'sandbox','actors','swapLiveActors'));
 };
 
 var makeDirectories = function(){
-    return mkDir(path.join(__dirname,'sandbox','actors','createNewVersion'));
+    return mkDir(path.join(__dirname,'sandbox','actors','swapLiveActors'));
 };
 
 var runTest = function(){
 
-    beginTest('createNewVersion.js');
+    beginTest('swapLiveActors.js');
 
     var actorFolder = path.join(__dirname, 'sandbox','actors');
     var sys = renactor('test',actorFolder);
@@ -32,11 +32,11 @@ var runTest = function(){
     .then(function(contents) {
         actorSource = contents;
 
-        return sys.hotSwap('createNewVersion',actorSource.replace('_version = {{X}}','_version = 0'));
+        return sys.hotSwap('swapLiveActors',actorSource.replace('_version = {{X}}','_version = 0').replace('{{hello}}','hello'));
     })
 
     .then(function(){
-        return sys.getActor('createNewVersion')
+        return sys.getActor('swapLiveActors')
             .then(function(actor){
                 actor.init();
 
@@ -45,29 +45,22 @@ var runTest = function(){
                 });
 
                 actor.ask('version',function(reply){
-                    test(reply == 0,'version == 0');                    
+                    test(reply == 0,'version == 0');
+
+                    sys.hotSwap('swapLiveActors',actorSource.replace('{{X}}','1').replace('{{hello}}','salve'))
+                        .then(function(){
+
+                            actor.ask("salve",["Node.js!",'test script'],function(reply){
+                                test(reply === "Done", 'reply === Done');
+                            });
+
+                            actor.ask('version',function(rep2){
+                                test(rep2 == 1,'version == 1');
+                            });
+                        });
                 });
 
             });
-    })
-
-    .then(function(){
-        return sys.hotSwap('createNewVersion',actorSource.replace('_version = {{X}}','_version = 1'));
-    })
-
-    .then(function(){
-        return sys.getActor('createNewVersion').then(function(actor){
-            actor.init();
-
-            actor.ask("salve",["Node.js!",'test script'],function(reply){
-                test(reply === "Done", 'reply === Done');
-            });
-
-            actor.ask('version',function(reply){
-                test(reply == 1,'version == 1');
-            });
-
-        });
     });
 };
 
