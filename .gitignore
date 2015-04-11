@@ -27,3 +27,4 @@ build/Release
 node_modules
 
 /actors/examples/hello/2.js
+/test/sandbox/**/*

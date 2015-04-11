@@ -1,4 +1,3 @@
-console.log('hello 2 loading');
 
 exports.get = function(){
     return {
@@ -9,7 +8,8 @@ exports.get = function(){
             return "Done";
         },
         version: function(){
-            return 2;
+            var _version = {{X}};
+            return _version;
         }
     };
 }

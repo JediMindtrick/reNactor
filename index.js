@@ -56,8 +56,8 @@ var _system = function(name,actorPath){
         },
         hotSwap: function(type,src){
 
-            console.log('hot swapping: ' + type);
-            console.log('new source: ' + src);
+//            console.log('hot swapping: ' + type);
+//            console.log('new source: ' + src);
 
             var requirePath = _getTypeDirectory(type);
 

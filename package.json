@@ -4,15 +4,17 @@
   "description": "A runtime for nactor actors",
   "main": "index.js",
   "dependencies": {
+    "bluebird": "^2.9.24",
+    "mkdirp": "^0.5.0",
     "nactor": "^0.2.0",
-    "bluebird": "^2.9.24"
+    "rimraf": "^2.3.2"
   },
   "devDependencies": {
     "colors": "^1.0.3"
   },
   "scripts": {
     "test": "node test/allTests.js",
-    "testRunner": "nodemon -e html,js --exec 'npm' test",
+    "testRunner": "nodemon --ignore 'test/sandbox/**/*' -e html,js --exec 'npm' test",
     "dev": "node sandbox.js",
     "start": "node index.js"
   },
