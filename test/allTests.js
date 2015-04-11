@@ -1,1 +1,2 @@
-var byVersion = require('./loadByVersion.js');
+var byVersion = require('./loadByVersion.js'),
+    createNewVersion = require('./createNewVersion.js');

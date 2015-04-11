@@ -1,8 +1,7 @@
 var path = require('path'),
-    Q = require('q'),
     nactor = require('nactor'),
-    promisify = require("promisify-node"),
-    fs = promisify("fs");
+    Promise = require("bluebird"),
+    fs = Promise.promisifyAll(require("fs"));
 
 var _system = function(name,actorPath){
     var _name = name;
@@ -31,13 +30,17 @@ var _system = function(name,actorPath){
     };
 
     return {
+        getPath: function(){
+            return _path;
+        },
+        getName: function(){
+            return _name;
+        },
         getActor: function(type,specificVersion){
-
-            var toReturn = Q.defer();
 
             var requirePath = _getTypeDirectory(type);
 
-            fs.readdir(requirePath)
+            return fs.readdirAsync(requirePath)
             .then(function(files){
 
                 var max = specificVersion !== void(0) ? specificVersion : _getMaxFileVersion(files);
@@ -48,10 +51,26 @@ var _system = function(name,actorPath){
 
                 var actor = nactor.actor(_actor.get());
 
-                toReturn.resolve(actor);
+                return actor;
+            });
+        },
+        hotSwap: function(type,src){
+
+            console.log('hot swapping: ' + type);
+            console.log('new source: ' + src);
+
+            var requirePath = _getTypeDirectory(type);
+
+            return fs.readdirAsync(requirePath)
+            .then(function(files){
+
+                var max = _getMaxFileVersion(files);
+
+                newPath = path.join(requirePath, (max + 1) + '.js');
+
+                return fs.writeFileAsync(newPath,src);
             });
 
-            return toReturn.promise;
         }
     };
 };

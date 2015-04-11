@@ -1,28 +1,16 @@
-//var helloActor = require('./actors/hello/0.js');
-
-/*
-var nactor = require("nactor");
-var actor = nactor.actor(helloActor.get());
-// Intialize the actor
-actor.init();
-// Ask to execute the hello() method. It will be called in next tick
-actor.ask("hello",["Node.js!",'test script']);
-*/
-
 var path = require('path');
-var actorFolder = path.join(__dirname, 'actors');
 
-var renactor = require('./index.js').system;
-var sys = renactor('test',actorFolder);
+var Promise = require("bluebird");
+var fs = Promise.promisifyAll(require("fs"));
 
-sys.getActor('examples.hello').then(function(actor){
-    actor.init();
-    // Ask to execute the hello() method. It will be called in next tick
-    actor.ask("hello",["Node.js!",'test script']);
-});
+var rawPath = path.join(__dirname,'test','rawHello2.js');
+console.log(rawPath);
 
-sys.getActor('examples.hello',0).then(function(actor){
-    actor.init();
-    // Ask to execute the hello() method. It will be called in next tick
-    actor.ask("hello",["Node.js!",'test script']);
+fs.readFileAsync(rawPath,'utf-8')
+.then(function(contents) {
+    console.log('file read');
+    console.log(contents);
+})
+.catch(function(err){
+    console.log(err);
 });
