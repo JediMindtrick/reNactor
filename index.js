@@ -31,7 +31,6 @@ var _system = function(name,actorPath){
     };
 
     var _getActor = function(type,opts,specificVersion){
-
         var requirePath = _getTypeDirectory(type);
 
         return fs.readdirAsync(requirePath)
