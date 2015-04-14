@@ -9,6 +9,7 @@ Based off of [nactor](https://github.com/benlau/nactor), this is a runtime for r
 3.  Hot-swapping of actor implementations
 
 ###Test Harness
+This project uses mocha and chai for automated testing.  Oh, and they're really integration tests, not unit tests, but you already knew that :)
 ```
 $ npm install -g nodemon
 $ npm testRunner

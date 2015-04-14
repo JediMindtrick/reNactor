@@ -19,12 +19,10 @@ var makeDirectories = function(){
 
 var runTest = function(){
 
-    beginTest('createNewVersion.js');
-
     var actorFolder = path.join(__dirname, 'sandbox','actors');
     var sys = renactor('test',actorFolder);
 
-    var rawPath = path.join(__dirname,'rawHello.js');
+    var rawPath = path.join(__dirname,'rawHello.js.mustache');
     var actorSource = '';
 
     return fs.readFileAsync(rawPath,'utf-8')
@@ -41,11 +39,11 @@ var runTest = function(){
                 actor.init();
 
                 actor.ask("salve",["Node.js!",'test script'],function(reply){
-                    test(reply === "Done", 'reply === Done');
+                    expect(reply).to.equal('Done');
                 });
 
                 actor.ask('version',function(reply){
-                    test(reply == 0,'version == 0');                    
+                    expect(reply).to.equal(0);
                 });
 
             });
@@ -60,17 +58,22 @@ var runTest = function(){
             actor.init();
 
             actor.ask("salve",["Node.js!",'test script'],function(reply){
-                test(reply === "Done", 'reply === Done');
+                expect(reply).to.equal('Done');
             });
 
             actor.ask('version',function(reply){
-                test(reply == 1,'version == 1');
+                expect(reply).to.equal(1);
             });
 
         });
     });
 };
 
-deleteDirectories()
-.then(makeDirectories)
-.then(runTest);
+describe("Hot swap", function() {
+    it("allows you to load new versions for use", function(done) {
+        deleteDirectories()
+        .then(makeDirectories)
+        .then(runTest)
+        .then(done);
+    });
+});

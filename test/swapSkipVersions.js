@@ -1,11 +1,12 @@
-var path = require('path'),
-    helpers = require('./testHelpers.js');
-    test = helpers.test;
-    beginTest = helpers.beginTest,
-    rmDir = helpers.rmDir,
-    mkDir = helpers.mkDir,
-    Promise = require("bluebird"),
-    fs = Promise.promisifyAll(require("fs"));
+var path        = require('path'),
+    helpers     = require('./testHelpers.js');
+    test        = helpers.test;
+    beginTest   = helpers.beginTest,
+    rmDir       = helpers.rmDir,
+    mkDir       = helpers.mkDir,
+    Promise     = require("bluebird"),
+    fs          = Promise.promisifyAll(require("fs")),
+    expect      = require("chai").expect;
 
 var renactor = require('../index.js').system;
 
@@ -20,12 +21,10 @@ var makeDirectories = function(){
 //TODO: make this test more robust
 var runTest = function(){
 
-    beginTest('swapSkipVersions.js');
-
     var actorFolder = path.join(__dirname, 'sandbox','actors');
     var sys = renactor('test',actorFolder);
 
-    var rawPath = path.join(__dirname,'rawHello.js');
+    var rawPath = path.join(__dirname,'rawHello.js.mustache');
     var actorSource = '';
 
     return fs.readFileAsync(rawPath,'utf-8')
@@ -42,11 +41,11 @@ var runTest = function(){
                 actor.init();
 
                 actor.ask("salve",["Node.js!",'test script'],function(reply){
-                    test(reply === "Done", 'reply === Done');
+                    expect(reply).to.equal('Done');
                 });
 
                 actor.ask('version',function(reply){
-                    test(reply == 0,'version == 0');
+                    expect(reply).to.equal(0);
 
                     sys.hotSwap('swapSkipVersions',
                         actorSource.replace('{{X}}','1').replace('{{hello}}','salve'),
@@ -55,11 +54,11 @@ var runTest = function(){
                         .then(function(){
 
                             actor.ask("salve",["Node.js!",'test script'],function(reply){
-                                test(reply === "Done", 'reply === Done');
+                                expect(reply).to.equal('Done');
                             });
 
                             actor.ask('version',function(rep2){
-                                test(rep2 == 0,'version == 0');
+                                expect(rep2).to.equal(0);
                             });
                         });
                 });
@@ -68,6 +67,12 @@ var runTest = function(){
     });
 };
 
-deleteDirectories()
-.then(makeDirectories)
-.then(runTest);
+describe("Hot swap", function() {
+    it("allows you to skip versions when swapping out already-running actors", function(done) {
+
+        deleteDirectories()
+        .then(makeDirectories)
+        .then(runTest)
+        .then(done);
+    });
+});
