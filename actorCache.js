@@ -81,8 +81,10 @@ var _replaceAll = function(type,skipVersions/*array*/){
 
     if(actors[type]){
         var skipVersions = r.filter(excludeFn(skips));
-        
-        skipVersions( r.range(0,actors[type].highestVersion + 1) ).forEach(function(version){
+
+        r
+        .filter(excludeFn(skips),r.range(0,actors[type].highestVersion + 1))
+        .forEach(function(version){
             toReturn = toReturn.concat(_replaceVersion(type,version));
         });
     }
