@@ -9,6 +9,7 @@
     "mkdirp": "^0.5.0",
     "mocha": "^2.2.4",
     "nactor": "git://github.com/JediMindtrick/nactor",
+    "ramda": "^0.13.0",
     "rimraf": "^2.3.2"
   },
   "devDependencies": {

@@ -1,16 +1,16 @@
-var path = require('path');
+var r = require('ramda');
 
-var Promise = require("bluebird");
-var fs = Promise.promisifyAll(require("fs"));
+var filterOut = r.filter(r.not(r.contains));
 
-var rawPath = path.join(__dirname,'test','rawHello2.js');
-console.log(rawPath);
+var first = [1,2,3,4,5];
+var exclude = [2,3];
 
-fs.readFileAsync(rawPath,'utf-8')
-.then(function(contents) {
-    console.log('file read');
-    console.log(contents);
-})
-.catch(function(err){
-    console.log(err);
-});
+var excludeFn = function(toExclude){
+    return function(f){
+        return r.not(r.contains(f,toExclude));
+    }
+};
+var skipVersions = r.filter(excludeFn(exclude));
+console.log(JSON.stringify(skipVersions(first)));
+
+//console.log(JSON.stringify(r.reject(r.flip(r.contains)(exclude)),first);

@@ -1,4 +1,6 @@
-var Promise = require("bluebird");
+var Promise     = require("bluebird"),
+    r           = require('ramda');;
+
 var actors = {
     'foo':{
         highestVersion: 0,
@@ -66,28 +68,21 @@ var _replaceVersion = function(type,version){
     return all;
 };
 
+var excludeFn = function(toExclude){
+    return function(f){
+        return r.not(r.contains(f,toExclude));
+    }
+};
+
 var _replaceAll = function(type,skipVersions/*array*/){
     var skips = skipVersions || [];
 
     var toReturn = [];
 
     if(actors[type]){
-        var toReplace = [];
-
-        //TODO: clean up this implementation with something like Ramda
-        for(var i = 0, l = actors[type].highestVersion + 1; i < l; i++){
-            toReplace.push(i);
-        }
-
-        skips.forEach(function(version){
-
-            var index = toReplace.indexOf(version);
-            if (index > -1) {
-                toReplace.splice(index, 1);
-            }
-        });
-
-        toReplace.forEach(function(version){
+        var skipVersions = r.filter(excludeFn(skips));
+        
+        skipVersions( r.range(0,actors[type].highestVersion + 1) ).forEach(function(version){
             toReturn = toReturn.concat(_replaceVersion(type,version));
         });
     }
