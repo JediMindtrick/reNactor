@@ -17,6 +17,7 @@ var makeDirectories = function(){
     return mkDir(path.join(__dirname,'sandbox','actors','swapSkipVersions'));
 };
 
+//TODO: make this test more robust
 var runTest = function(){
 
     beginTest('swapSkipVersions.js');
@@ -50,7 +51,7 @@ var runTest = function(){
                     sys.hotSwap('swapSkipVersions',
                         actorSource.replace('{{X}}','1').replace('{{hello}}','salve'),
                         [0])
-                        
+
                         .then(function(){
 
                             actor.ask("salve",["Node.js!",'test script'],function(reply){

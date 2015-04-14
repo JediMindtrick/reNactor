@@ -74,6 +74,7 @@ var _replaceAll = function(type,skipVersions/*array*/){
     if(actors[type]){
         var toReplace = [];
 
+        //TODO: clean up this implementation with something like Ramda
         for(var i = 0, l = actors[type].highestVersion + 1; i < l; i++){
             toReplace.push(i);
         }
