@@ -68,25 +68,27 @@ var _replaceVersion = function(type,version){
     return all;
 };
 
-var excludeFn = function(toExclude){
-    return function(f){
-        return r.not(r.contains(f,toExclude));
-    }
-};
-
 var _replaceAll = function(type,skipVersions/*array*/){
     var skips = skipVersions || [];
 
     var toReturn = [];
 
     if(actors[type]){
-        var skipVersions = r.filter(excludeFn(skips));
+        var skipVersions = r.flip(r.contains)(skips);
+        var fromVersions = r.range(0,actors[type].highestVersion + 1);
+        var accFunc = function(arr,version){
+            return arr.concat(_replaceVersion(type,version));
+        };
 
-        r
-        .filter(excludeFn(skips),r.range(0,actors[type].highestVersion + 1))
+        toReturn = r.reduce(accFunc,[],r.reject(skipVersions,fromVersions));
+
+        /*Not sure which one is more clear...above version or this one.
+
+        r.reject(skipVersions,fromVersions)
         .forEach(function(version){
             toReturn = toReturn.concat(_replaceVersion(type,version));
         });
+        */
     }
 
     return Promise.all(toReturn);
